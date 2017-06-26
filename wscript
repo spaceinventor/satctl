@@ -33,14 +33,19 @@ def configure(ctx):
     ctx.options.param_server = True
     ctx.options.param_store_file = True
     ctx.options.param_group = True
+    ctx.options.param_collector = True
 
     ctx.options.vmem_client = True
     ctx.options.vmem_client_ftp = True
     ctx.options.vmem_server = True
     ctx.options.vmem_ram = True
     ctx.options.vmem = True
-
+    
     ctx.recurse(modules)
+    
+    have_libcurl = ctx.check_cc(lib='curl', mandatory=False, define_name='HAVE_LIBCURL')
+    if have_libcurl:
+        ctx.env.append_unique('LIBS', ['curl'])
     
     ctx.env.prepend_value('CFLAGS', ['-Os','-Wall', '-g', '-rdynamic', '-std=gnu99'])
 

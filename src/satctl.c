@@ -13,6 +13,7 @@
 #include <slash/slash.h>
 
 #include <param/param.h>
+#include <param/param_collector.h>
 #include <vmem/vmem_server.h>
 #include <vmem/vmem_ram.h>
 
@@ -126,6 +127,9 @@ int configure_csp(uint8_t addr, char *ifc)
 
 	csp_thread_handle_t server_handle;
 	csp_thread_create(param_server_task, "param", 2000, NULL, 1, &server_handle);
+
+	csp_thread_handle_t collector_handle;
+	csp_thread_create(param_collector_task, "coll", 2000, NULL, 1, &collector_handle);
 
 	csp_thread_handle_t vmem_handle;
 	csp_thread_create(vmem_server_task, "vmem", 2000, NULL, 1, &vmem_handle);
