@@ -17,12 +17,14 @@ satctl_sources = [
 	'src/slash_csp.c',
 	'src/csp_debug_param.c',
 	'src/base16.c',
-	'src/rewl_test.c',
+	'src/broadcast_client.c',
+	'src/prometheus.c',
+	'src/param_sniffer.c',
 ]
 
 ldscript = files('linux.ld')
 
-satctl = executable('satctl', satctl_sources,
+satctl = executable('nexus', satctl_sources,
 	dependencies : [slash_dep, csp_dep, param_dep],
 	link_args : ['-Wl,-Map=satctl.map', '-lm', '-T@0@/@1@'.format(meson.current_source_dir(), ldscript[0])],
     link_depends : ldscript,

@@ -26,8 +26,12 @@
 #include <param/param_group.h>
 #include <param/param_server.h>
 
-#define SATCTL_PROMPT_GOOD		"\033[96msatctl \033[90m%\033[0m "
-#define SATCTL_PROMPT_BAD		"\033[96msatctl \033[31m!\033[0m "
+#include "param_sniffer.h"
+#include "broadcast_client.h"
+#include "prometheus.h"
+
+#define SATCTL_PROMPT_GOOD		"\033[95mnexus \033[90m%\033[0m "
+#define SATCTL_PROMPT_BAD		"\033[95mnexus \033[31m!\033[0m "
 #define SATCTL_DEFAULT_INTERFACE	"can0"
 #define SATCTL_DEFAULT_ADDRESS		0
 
@@ -57,7 +61,7 @@ int configure_csp(uint8_t addr, char *ifc)
 	csp_conf_t csp_config;
 	csp_conf_get_defaults(&csp_config);
 	csp_config.address = addr;
-	csp_config.hostname = "satctl";
+	csp_config.hostname = "nexus";
 	csp_config.model = "linux";
 	if (csp_init(&csp_config) < 0)
 		return -1;
@@ -152,6 +156,10 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
+	broadcast_client_init();
+	prometheus_init();
+	param_sniffer_init();
+
 	/* Interactive or one-shot mode */
 	if (remain > 0) {
 		ex = malloc(SATCTL_LINE_SIZE);
@@ -181,6 +189,6 @@ int main(int argc, char **argv)
 	}
 
 	slash_destroy(slash);
-
+	prometheus_close();
 	return 0;
 }
