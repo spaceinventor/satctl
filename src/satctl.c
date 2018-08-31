@@ -15,6 +15,7 @@
 #include <param/param.h>
 #include <vmem/vmem_server.h>
 #include <vmem/vmem_ram.h>
+#include <vmem/vmem_file.h>
 
 #include <csp/csp.h>
 #include <csp/arch/csp_thread.h>
@@ -25,6 +26,7 @@
 #include <param/param_list.h>
 #include <param/param_group.h>
 #include <param/param_server.h>
+#include <param/param_collector.h>
 
 #include "param_sniffer.h"
 #include "broadcast_client.h"
@@ -159,6 +161,12 @@ int main(int argc, char **argv)
 	broadcast_client_init();
 	prometheus_init();
 	param_sniffer_init();
+	extern const vmem_t vmem_col;
+	vmem_file_init(&vmem_col);
+
+	/* Collector task */
+	pthread_t param_collector_handle;
+	pthread_create(&param_collector_handle, NULL, &param_collector_task, NULL);
 
 	/* Interactive or one-shot mode */
 	if (remain > 0) {

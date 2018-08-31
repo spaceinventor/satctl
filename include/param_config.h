@@ -10,4 +10,6 @@
 
 #define PARAMID_CSP_DEBUG					50
 
+#define PARAMID_COLLECTOR_CNFSTR            200
+
 #endif /* INCLUDE_PARAM_CONFIG_H_ */

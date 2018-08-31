@@ -20,6 +20,7 @@ satctl_sources = [
 	'src/broadcast_client.c',
 	'src/prometheus.c',
 	'src/param_sniffer.c',
+	'src/param_vmem.c',
 ]
 
 ldscript = files('linux.ld')

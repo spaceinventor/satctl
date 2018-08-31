@@ -15,3 +15,5 @@ build
 builddir
 *.cfg
 *.lzo
+*.vmem
+*.dat

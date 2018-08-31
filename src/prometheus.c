@@ -12,6 +12,8 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 
+#include "prometheus.h"
+
 static pthread_t prometheus_tread;
 
 static char prometheus_buf[1024*1024] = {0};
@@ -34,7 +36,7 @@ void * prometheus_exporter(void * param) {
 
 retry_bind:
 	if (bind(listen_fd, (struct sockaddr *) &server_addr, sizeof(server_addr)) < 0) {
-		printf("Cannot bind prometheus to port 9101\n");
+		//printf("Cannot bind prometheus to port 9101\n");
 		sleep(1);
 		goto retry_bind;
 	} else {
@@ -53,7 +55,7 @@ retry_bind:
 
 		/* Dump queued data */
 		written += write(conn_fd, prometheus_buf, prometheus_buf_len);
-		printf("Prometheus sent %d bytes\n", written);
+		//printf("Prometheus sent %d bytes\n", written);
 
 		prometheus_clear();
 
