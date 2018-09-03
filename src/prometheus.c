@@ -16,12 +16,12 @@
 
 static pthread_t prometheus_tread;
 
-static char prometheus_buf[1024*1024] = {0};
+static char prometheus_buf[10*1024*1024] = {0};
 static int prometheus_buf_len = 0;
 static int listen_fd;
 
 static char header[1024] =
-		"HTTP/1.1 200 OK\r\n"
+		"HTTP/1.1 200 OK;\r\n"
 		"Content-Type: text/plain;\r\n\r\n";
 
 
@@ -68,8 +68,10 @@ retry_bind:
 }
 
 void prometheus_add(char * str) {
-	strcpy(prometheus_buf + prometheus_buf_len, str);
-	prometheus_buf_len += strlen(str);
+	if (prometheus_buf_len + strlen(str) < 1024 * 1024 * 10) {
+		strcpy(prometheus_buf + prometheus_buf_len, str);
+		prometheus_buf_len += strlen(str);
+	}
 }
 
 void prometheus_clear(void) {

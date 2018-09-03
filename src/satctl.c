@@ -123,12 +123,13 @@ int main(int argc, char **argv)
 {
 	static struct slash *slash;
 	int remain, index, i, c, p = 0;
+	int nocollector = 0;
 	char *ex;
 
 	uint8_t addr = SATCTL_DEFAULT_ADDRESS;
 	char *ifc = SATCTL_DEFAULT_INTERFACE;
 
-	while ((c = getopt(argc, argv, "+hr:i:n:")) != -1) {
+	while ((c = getopt(argc, argv, "+hr:i:n:c")) != -1) {
 		switch (c) {
 		case 'h':
 			usage();
@@ -138,6 +139,9 @@ int main(int argc, char **argv)
 			break;
 		case 'n':
 			addr = atoi(optarg);
+			break;
+		case 'c':
+			nocollector = 1;
 			break;
 		default:
 			exit(EXIT_FAILURE);
@@ -159,14 +163,18 @@ int main(int argc, char **argv)
 	}
 
 	broadcast_client_init();
-	prometheus_init();
-	param_sniffer_init();
-	extern const vmem_t vmem_col;
-	vmem_file_init(&vmem_col);
 
-	/* Collector task */
-	pthread_t param_collector_handle;
-	pthread_create(&param_collector_handle, NULL, &param_collector_task, NULL);
+	if (nocollector == 0) {
+		printf("Starting HK collector\n");
+		prometheus_init();
+		param_sniffer_init();
+		extern const vmem_t vmem_col;
+		vmem_file_init(&vmem_col);
+		pthread_t param_collector_handle;
+		pthread_create(&param_collector_handle, NULL, &param_collector_task, NULL);
+	} else {
+		printf("No collector\n");
+	}
 
 	/* Interactive or one-shot mode */
 	if (remain > 0) {
