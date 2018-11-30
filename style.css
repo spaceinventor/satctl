@@ -1,0 +1,10 @@
+GtkWindow {
+	background-color:rgba(233,23,34,1);
+}
+
+GtkFixed {
+	background-color: rgba(0,0,255,1);
+}
+blinkCounter2 {
+	background-color: rgba(0,0,255,1);
+}

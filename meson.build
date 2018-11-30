@@ -11,6 +11,9 @@ slash_dep = slash.get_variable('slash_dep')
 param = subproject('param')
 param_dep = param.get_variable('param_dep')
 
+gtk_dep = dependency('gtk+-3.0')
+gmod_dep = dependency('gmodule-2.0')
+
 satctl_sources = [
 	'src/satctl.c',
 	'src/time.c',
@@ -21,9 +24,10 @@ satctl_sources = [
 ]
 
 satctl = executable('satctl', satctl_sources,
-	dependencies : [slash_dep, csp_dep, param_dep],
-	link_args : ['-Wl,-Map=satctl.map', '-lm'],
+	dependencies : [slash_dep, csp_dep, param_dep, gtk_dep, gmod_dep],
+	link_args : ['-Wl,-Map=satctl.map', '-lm', '-lpigpio'],
 	install : true,
+	c_args : '-rdynamic',
 )
 
 custom_target('size', output: ['dummy.txt'], command: [find_program('size'), satctl.full_path()], depends: satctl, build_by_default: true)

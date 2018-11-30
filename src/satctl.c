@@ -4,11 +4,19 @@
  *
  * Satellite and subsystem control program
  */
-
+//#include <style.css>
+#include <cairo.h>
+#include <math.h>
+#include <ctype.h>
+#include <string.h>
+#include <poll.h>
+#include <pigpio.h>
+#include <gtk/gtk.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+#include <pthread.h>
 
 #include <slash/slash.h>
 
@@ -35,6 +43,9 @@
 #define SATCTL_HISTORY_SIZE		2048
 
 VMEM_DEFINE_STATIC_RAM(test, "test", 100000);
+//--- Mihaela ---//
+void showPinLevel(void);
+//___END___//
 
 void usage(void)
 {
@@ -115,8 +126,236 @@ int configure_csp(uint8_t addr, char *ifc)
 	return 0;
 }
 
+//--- Mihaela ---//
+GtkBuilder *builder; 
+
+int counter = 0;
+int blinkStart = 0;
+int graphButtonClicked = 0; 
+
+void * counter_thread(void * param) {
+	
+    while(1) {
+		counter = counter + 1;
+		sleep(1);
+	}
+	
+	return NULL;
+}//END counter_thread
+		
+void * ui_thread(void * param) {
+    gtk_init(NULL, NULL);
+    builder = gtk_builder_new();
+    gtk_builder_add_from_file(builder, "ui.glade", NULL);
+    gtk_builder_connect_signals(builder, NULL);
+    gtk_widget_show(GTK_WIDGET(gtk_builder_get_object(builder, "window_main")));                
+    gtk_main();
+    
+	return NULL;
+}//END ui_thread
+
+void on_counterButton_clicked() {
+	printf("\n");
+	char buf[100];
+	sprintf(buf, "Counter = %d", counter);
+	gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "counterLabel"))), buf);
+	printf("\nButton clicked\n");
+	printf("Current counter nr: %d", counter);
+}//END counterButton_clicked
+
+//------------ PIN SETTINGS ----------//
+int pinNum = 21;									//Choose pin Number to work with.
+int blinkCounter = 0;
+void * blink_thread(void * param){
+	while(1){
+		if(blinkStart == 1){
+		blinkCounter = blinkCounter + 1;
+		gpioWrite(pinNum,1);
+		showPinLevel();
+		sleep(1);
+		gpioWrite(pinNum, 0);
+		showPinLevel();
+		}
+		sleep(1);
+	}
+}//END blink_thread
+
+void showPinMode(){
+	printf("\nPin Mode: ");
+	if(gpioGetMode(pinNum) == PI_OUTPUT){			//if pin is output, then
+		printf("OUTPUT");
+		char buf[100];
+		sprintf(buf, "OUTPUT");						//Set text to "OUTPUT".
+		gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "pinMode"))), buf);
+	}else if(gpioGetMode(pinNum) == PI_INPUT){		//if pin is input, then
+		printf("INPUT");
+		char buf[100];
+		sprintf(buf, "INPUT");						//Set text to "INPUT".
+		gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "pinMode"))), buf);
+	}else{											//if the chosen pin is not set as in/out-put.
+		printf("not set.");						
+		char buf[100];
+		sprintf(buf, "None");						//Set text to "None".
+		gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "pinMode"))), buf);
+	}
+	printf("\n");
+}//END checkPinMode
+
+void showPinLevel(){
+	printf("\nPin Level:");
+	printf("%d", gpioRead(pinNum));			//print pin bit status just set to high
+	char buf[100];
+	sprintf(buf, "\nLevel: %d", gpioRead(pinNum));
+	gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "pinLevel"))), buf);
+	printf("\n");
+}
+
+/*--- Pin Controls ---*/
+void on_gpioButton_clicked(){
+	/*---Show Pin Number ---*/
+	printf("\nPin: %d", pinNum);
+	char buf[100];
+	sprintf(buf, "%d", pinNum);
+	gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "gpioLabel"))), buf);
+	printf("\n");
+}//END pinNum_info
+
+void on_pinOut_clicked(){
+	gpioSetMode(pinNum, PI_OUTPUT);	
+	showPinMode();
+}//END pinOut_clicked
+
+void on_pinIn_clicked(){
+	gpioSetMode(pinNum, PI_INPUT);	
+	showPinMode();
+}//END pinIn_clicked
+
+void on_pinHigh_clicked(){
+	if(gpioGetMode(pinNum) == PI_OUTPUT){				//if pin is output, then
+		gpioSetPullUpDown(pinNum, PI_PUD_UP);			//Set pull-up.
+		gpioWrite(pinNum,1);							//set pin high, and
+		showPinLevel();
+	}else{
+		printf("Error: ");
+		showPinMode();
+	}
+}//END pinHigh_clicked
+
+void on_pinLow_clicked(){
+	if(gpioGetMode(pinNum) == PI_OUTPUT){				//if pin is output, then
+		gpioWrite(pinNum,0);							//set pin high, and
+		showPinLevel();
+	}else{
+		printf("Error: ");
+		showPinMode();
+	}
+}//END pinLow_clicked
+
+void on_pinBlink_clicked(){
+	if(gpioGetMode(pinNum) == PI_OUTPUT){				//if pin is output, then
+		gpioSetPullUpDown(pinNum, PI_PUD_UP);			//Set pull-up.
+		blinkStart = 1;
+	}else{
+		printf("Error: ");		
+		showPinMode();
+	}
+}//END pinBlink_clicked
+
+void on_pinStopBlink_clicked(){
+	blinkStart = 0;
+	gpioWrite(pinNum, 0);
+	showPinLevel();
+	char buf[100];
+	sprintf(buf, "\nSeconds \nblinked: %d", blinkCounter*2);
+	gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "blinkCounter"))), buf);
+	printf("\n");
+}//END pinStopBlink_clicked
+//___________________________END PIN SETTINGS________________//
+//------------ ARRAY / SIGNAL ----------//
+void * arrayProcess_thread(void * param){
+		printf("arrayThread running\n");
+		while(1){
+			if(graphButtonClicked == 1) {
+				/*Create array/signal*/
+				int graphArray[10] = {1,2,3,4,5,6,7,8,9,10};
+				for(int i=0; i<10; i++) {
+					if (graphButtonClicked == 0)
+						break;
+					/*Write to processbar*/
+					gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(GTK_WIDGET(gtk_builder_get_object(builder, "progressbar1"))), 0.1*i+0.1);
+					gtk_progress_bar_set_text(GTK_PROGRESS_BAR(GTK_WIDGET(gtk_builder_get_object(builder, "progressbar1"))), "10V");
+					/*Write to console*/
+					printf("graphArray[%d] = %d\n",i,graphArray[i]);
+					/*write to label*/
+					char buf[100];
+					sprintf(buf, "Graph = %d", graphArray[i]);
+					gtk_label_set_text(GTK_LABEL(GTK_WIDGET(gtk_builder_get_object(builder, "graphLabel"))), buf);
+					/*delay 1 sec and print new line*/
+					sleep(1);
+					printf("\n");
+				}
+			}
+		sleep(1);	
+		}
+		printf("\n");
+		sleep(1);
+	return NULL;
+}//END arrayProcess_thread
+	
+void on_graphbutton_clicked(){ 
+	graphButtonClicked = 1;
+	printf("\nClicked\n");
+}//END graphbutton_clicked
+
+void on_switchArray_state_set(void) {
+	if (gtk_switch_get_active(GTK_SWITCH(GTK_WIDGET(gtk_builder_get_object(builder, "switchArray"))))) {	
+		printf("On\n");
+		graphButtonClicked = 1;
+	} else {
+		printf("Off\n");
+		graphButtonClicked = 0;
+	}				
+}
+
+//--- Testing drawing SOMETHING in a drawingArea  :) :) ---// 
+void graphArea_draw_cb(){
+cairo_surface_t *surface;
+cairo_t *cr;
+
+surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, 120, 120);
+cr = cairo_create (surface);
+	cairo_set_line_width (cr, 0.1);
+cairo_set_source_rgb (cr, 0, 0, 0);
+cairo_rectangle (cr, 0.25, 0.25, 0.5, 0.5);
+cairo_stroke (cr);
+    
+	}
+	//____ END TESTING DRAWING AREA ___//
+//___________________________ END Mihaela _____________________________//
+
 int main(int argc, char **argv)
-{
+{	
+	//---------- CSS -------------
+    GtkCssProvider *provider;
+    GdkDisplay *display;
+    GdkScreen *screen;
+    
+    provider = gtk_css_provider_new ();
+    display = gdk_display_get_default ();
+    screen = gdk_display_get_default_screen (display);
+    gtk_style_context_add_provider_for_screen (screen, GTK_STYLE_PROVIDER (provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+    const gchar *myCssFile = "style.css";
+    GError *error = 0;
+    gtk_css_provider_load_from_file(provider, g_file_new_for_path(myCssFile), &error);
+    g_object_unref (provider);
+    //---------------------------
+    
+	if (gpioInitialise() < 0)
+   {
+      fprintf(stderr, "pigpio initialisation failed\n");
+      return 1;
+   }
+		
 	static struct slash *slash;
 	int remain, index, i, c, p = 0;
 	char *ex;
@@ -153,8 +392,23 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Failed to init slash\n");
 		exit(EXIT_FAILURE);
 	}
+	
+	/* Setup UI */
+	pthread_t ui_handle;
+	pthread_create(&ui_handle, NULL, ui_thread, NULL);
+	
+	/* Setup Counter */
+	pthread_t counter_handle;
+	pthread_create(&counter_handle, NULL, counter_thread, NULL);
+	
+	/*Setup blink_thread */
+	pthread_t blink_handle;
+	pthread_create(&blink_handle, NULL, blink_thread, NULL);
 
-
+	/* Setup arrayProcess_thread */
+	pthread_t arrayProcess_handle;
+	pthread_create(&arrayProcess_handle, NULL, arrayProcess_thread, NULL);
+	
 	/* Interactive or one-shot mode */
 	if (remain > 0) {
 		ex = malloc(SATCTL_LINE_SIZE);

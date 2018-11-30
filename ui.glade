@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.20.0 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <object class="GtkWindow" id="window_main">
+    <property name="can_focus">False</property>
+    <property name="resizable">False</property>
+    <property name="default_width">800</property>
+    <property name="default_height">480</property>
+    <child>
+      <object class="GtkFixed" id="window_fixed">
+        <property name="width_request">800</property>
+        <property name="height_request">480</property>
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <child>
+          <object class="GtkLabel" id="counterLabel">
+            <property name="width_request">93</property>
+            <property name="height_request">60</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Counter 
+stops at ...</property>
+          </object>
+          <packing>
+            <property name="x">340</property>
+            <property name="y">180</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="counterButton">
+            <property name="label" translatable="yes">Counter
+is at ...</property>
+            <property name="width_request">95</property>
+            <property name="height_request">60</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_counterButton_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">240</property>
+            <property name="y">179</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="graphbutton">
+            <property name="label" translatable="yes">Graph
+Array</property>
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_graphbutton_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">240</property>
+            <property name="y">8</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="seperatorVerti">
+            <property name="width_request">22</property>
+            <property name="height_request">480</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="orientation">vertical</property>
+          </object>
+          <packing>
+            <property name="x">215</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="graphLabel">
+            <property name="width_request">87</property>
+            <property name="height_request">81</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Array
+will
+show</property>
+          </object>
+          <packing>
+            <property name="x">346</property>
+            <property name="y">9</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="gpioButton">
+            <property name="label" translatable="yes">GPIO info</property>
+            <property name="width_request">101</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_gpioButton_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">6</property>
+            <property name="y">8</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="gpioLabel">
+            <property name="width_request">78</property>
+            <property name="height_request">40</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Pin Num</property>
+          </object>
+          <packing>
+            <property name="x">128</property>
+            <property name="y">7</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="pinHigh">
+            <property name="label" translatable="yes">Set HIGH</property>
+            <property name="width_request">112</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_pinHigh_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">6</property>
+            <property name="y">125</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="pinLow">
+            <property name="label" translatable="yes">Set LOW</property>
+            <property name="width_request">112</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_pinLow_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">7</property>
+            <property name="y">159</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="pinLevel">
+            <property name="width_request">77</property>
+            <property name="height_request">67</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">  Pin
+Level</property>
+          </object>
+          <packing>
+            <property name="x">130</property>
+            <property name="y">125</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="pinOut">
+            <property name="label" translatable="yes">Set OUTPUT</property>
+            <property name="width_request">97</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_pinOut_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">6</property>
+            <property name="y">54</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="pinIn">
+            <property name="label" translatable="yes">Set INPUT</property>
+            <property name="width_request">120</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_pinIn_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">7</property>
+            <property name="y">87</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="pinMode">
+            <property name="width_request">78</property>
+            <property name="height_request">65</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">  Pin
+Mode</property>
+          </object>
+          <packing>
+            <property name="x">131</property>
+            <property name="y">54</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="pinBlink">
+            <property name="label" translatable="yes">Start blink</property>
+            <property name="width_request">113</property>
+            <property name="height_request">31</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_pinBlink_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">7</property>
+            <property name="y">193</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="blinkCounter">
+            <property name="width_request">95</property>
+            <property name="height_request">69</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Blinked for
+... seconds</property>
+          </object>
+          <packing>
+            <property name="x">121</property>
+            <property name="y">187</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="testLabel">
+            <property name="width_request">95</property>
+            <property name="height_request">69</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Test Label</property>
+          </object>
+          <packing>
+            <property name="x">121</property>
+            <property name="y">250</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="pinStopBlink">
+            <property name="label" translatable="yes">Stop blink</property>
+            <property name="width_request">114</property>
+            <property name="height_request">28</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="receives_default">True</property>
+            <signal name="clicked" handler="on_pinStopBlink_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">6</property>
+            <property name="y">222</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkProgressBar" id="progressbar1">
+            <property name="width_request">193</property>
+            <property name="height_request">68</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="tooltip_text" translatable="yes">Tool&lt;b&gt;tip&lt;/b&gt;</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="pulse_step">0</property>
+            <property name="text" translatable="yes">0v</property>
+            <property name="show_text">True</property>
+            <property name="ellipsize">end</property>
+          </object>
+          <packing>
+            <property name="x">448</property>
+            <property name="y">15</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkStackSwitcher">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="x">576</property>
+            <property name="y">213</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSwitch" id="switchArray">
+            <property name="width_request">90</property>
+            <property name="height_request">35</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="vexpand">True</property>
+            <signal name="state-set" handler="on_switchArray_state_set" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">246</property>
+            <property name="y">94</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkDrawingArea" id="graphArea">
+            <property name="width_request">250</property>
+            <property name="height_request">268</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <signal name="draw" handler="on_graphArea_draw" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">517</property>
+            <property name="y">179</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
