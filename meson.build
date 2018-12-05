@@ -18,10 +18,15 @@ satctl_sources = [
 	'src/csp_debug_param.c',
 	'src/base16.c',
 	'src/broadcast_client.c',
-	'src/prometheus.c',
 	'src/param_sniffer.c',
 	'src/param_vmem.c',
 ]
+
+if get_option('prometheus') == true
+	param_src += files([
+		'src/prometheus.c',
+	])
+endif
 
 ldscript = files('linux.ld')
 

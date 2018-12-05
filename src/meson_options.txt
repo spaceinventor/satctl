@@ -1,0 +1,3 @@
+option('collector', type: 'boolean', value: false, description: 'Build collector')
+option('prometheus', type: 'boolean', value: false, description: 'Build prometheus node')
+
