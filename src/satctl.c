@@ -15,6 +15,7 @@
 #include <param/param.h>
 #include <vmem/vmem_server.h>
 #include <vmem/vmem_ram.h>
+#include <vmem/vmem_file.h>
 
 #include <csp/csp.h>
 #include <csp/arch/csp_thread.h>
@@ -27,14 +28,20 @@
 #include <param/param_server.h>
 #include <param/param_collector.h>
 
-#define SATCTL_PROMPT_GOOD		"\033[96msatctl \033[90m%\033[0m "
-#define SATCTL_PROMPT_BAD		"\033[96msatctl \033[31m!\033[0m "
-#define SATCTL_DEFAULT_INTERFACE	"can0"
+#include "prometheus.h"
+#include "param_sniffer.h"
+
+#define SATCTL_PROMPT_GOOD		    "\033[96msatctl \033[90m%\033[0m "
+#define SATCTL_PROMPT_BAD		    "\033[96msatctl \033[31m!\033[0m "
+#define SATCTL_DEFAULT_CAN_DEV	    "can0"
+#define SATCTL_DEFAULT_UART_DEV	    "/dev/ttyUSB0"
+#define SATCTL_DEFAULT_UART_BAUD    1000000
 #define SATCTL_DEFAULT_ADDRESS		0
 #define SATCTL_LINE_SIZE		    128
 #define SATCTL_HISTORY_SIZE		    2048
 
 VMEM_DEFINE_STATIC_RAM(test, "test", 100000);
+VMEM_DEFINE_FILE(col, "col", "colcnf.vmem", 120);
 
 void usage(void)
 {
@@ -134,12 +141,6 @@ int main(int argc, char **argv)
 		char *cmd = "\nset kiss_mode 1\n";
 		usart_putstr(cmd, strlen(cmd));
 	}
-	void kiss_usart_callback(uint8_t *buf, int len, void *pxTaskWoken) {
-		csp_kiss_rx(&kiss_if, buf, len, pxTaskWoken);
-	}
-	usart_set_callback(kiss_usart_callback);
-	csp_kiss_init(&kiss_if, &kiss_handle, kiss_usart_putchar, NULL, "KISS");
-#endif
 
 	if (use_can) {
 		csp_iface_t *can0 = csp_can_socketcan_init(can_dev, 1000000, 0);
@@ -174,9 +175,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	broadcast_client_init();
-
-	if (nocollector == 0) {
+	if (1 == 1) {
 		printf("Starting HK collector\n");
 		prometheus_init();
 		param_sniffer_init();

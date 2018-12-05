@@ -17,13 +17,11 @@ satctl_sources = [
 	'src/slash_csp.c',
 	'src/csp_debug_param.c',
 	'src/base16.c',
-	'src/broadcast_client.c',
-	'src/param_sniffer.c',
-	'src/param_vmem.c',
 ]
 
 if get_option('prometheus') == true
-	param_src += files([
+	satctl_sources += files([
+		'src/param_sniffer.c',
 		'src/prometheus.c',
 	])
 endif
