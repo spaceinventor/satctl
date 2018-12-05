@@ -30,10 +30,9 @@ endif
 
 ldscript = files('linux.ld')
 
-satctl = executable('nexus', satctl_sources,
+satctl = executable('satctl', satctl_sources,
 	dependencies : [slash_dep, csp_dep, param_dep],
-	link_args : ['-Wl,-Map=satctl.map', '-lm', '-T@0@/@1@'.format(meson.current_source_dir(), ldscript[0])],
-    link_depends : ldscript,
+	link_args : ['-Wl,-Map=satctl.map', '-lm'],
 	install : true,
 )
 
