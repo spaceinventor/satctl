@@ -40,6 +40,9 @@
 #define SATCTL_DEFAULT_ADDRESS		0
 #define SATCTL_LINE_SIZE		    128
 #define SATCTL_HISTORY_SIZE		    2048
+#define SATCTL_MAJOR_VERSION		1
+#define SATCTL_MINOR_VERSION		0
+#define SATCTL_BUILD_VERSION		0
 
 VMEM_DEFINE_STATIC_RAM(test, "test", 100000);
 VMEM_DEFINE_FILE(col, "col", "colcnf.vmem", 120);
@@ -62,6 +65,7 @@ void usage(void)
 	printf(" -r REMOTE_IP\tSetup UDP peer\n");
 	printf(" -p\t\tSetup prometheus node\n");
 	printf(" -h\t\tPrint this help and exit\n");
+	printf(" -v\t\tPrint satctl version and exit\n");
 }
 
 void kiss_discard(char c, void * taskwoken) {
@@ -83,7 +87,7 @@ int main(int argc, char **argv)
 	int use_prometheus = 0;
 	char * udp_peer_ip = "";
 
-	while ((c = getopt(argc, argv, "+hpr:b:c:u:n:")) != -1) {
+	while ((c = getopt(argc, argv, "+hpvr:b:c:u:n:")) != -1) {
 		switch (c) {
 		case 'h':
 			usage();
@@ -109,6 +113,10 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			use_prometheus = 1;
+			break;
+		case 'v':
+			printf("satctl version %d.%d.%d\n", SATCTL_MAJOR_VERSION, SATCTL_MINOR_VERSION, SATCTL_BUILD_VERSION);
+			exit(EXIT_SUCCESS);
 			break;
 		default:
 			exit(EXIT_FAILURE);
