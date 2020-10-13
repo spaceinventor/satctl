@@ -65,7 +65,7 @@ void usage(void)
 	printf(" -r REMOTE_IP\tSetup UDP peer\n");
 	printf(" -p\t\tSetup prometheus node\n");
 	printf(" -h\t\tPrint this help and exit\n");
-	printf(" -v\t\tPrint satctl version and exit\n");
+	printf(" -v\t\tPrint version and exit\n");
 }
 
 void kiss_discard(char c, void * taskwoken) {
