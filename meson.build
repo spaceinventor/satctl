@@ -16,7 +16,8 @@ project('satctl', 'c', subproject_dir: 'lib', default_options: [
 	'param:commands_client=true',
 	'param:scheduler_client=true',
 	'param:collector=true', 
-	'param:list_dynamic=true'])
+	'param:list_dynamic=true'
+])
 
 add_global_arguments('-I../include', language: 'c')
 
@@ -49,6 +50,8 @@ satctl_sources = [
 	'src/csp_if_eth.c',
 	'src/it6942a.c',
 	'src/csp_scan.c',
+	'src/hk.c',
+	'src/hk_collector.c',
 ]
 
 satctl = executable('satctl', satctl_sources,

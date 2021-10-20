@@ -56,11 +56,33 @@ static csp_mutex_t hk_storage_mtx;
 static csp_mutex_buffer_t hk_storage_mtx_buffer;
 
 static uint8_t active_write_buf = 0;
-//static uint8_t active_read_buf = 0;
+static uint8_t active_read_buf = 0;
 
 static param_queue_t temp_queue;
 
 static int saved_buffers = 0;
+
+static void hk_load(vmem_t * rd_buf, int block_addr) {
+	if (csp_mutex_lock(&hk_storage_mtx, 1000) < 0) {
+		// failed to get mutex - TODO: make it retry somehow
+		return;
+	}
+
+	vmem_hk_test.read(&vmem_hk_test, block_addr * HK_RAM_BUF_SIZE, rd_buf->vaddr, HK_RAM_BUF_SIZE);
+}
+
+static vmem_t * hk_read(int block_addr) {
+	vmem_t *rd_buf;
+	if (active_read_buf == 0) {
+		rd_buf = &vmem_hk_rd0;
+	} else {
+		rd_buf = &vmem_hk_rd1;
+	}
+
+	hk_load(rd_buf, block_addr);
+
+	return rd_buf;
+}
 
 static void hk_save_start(vmem_t * wr_buf) {
 	if (csp_mutex_lock(&hk_storage_mtx, 1000) < 0) {
@@ -69,7 +91,7 @@ static void hk_save_start(vmem_t * wr_buf) {
 	}
 
 	#if HK_EMBED
-
+	// TODO: eMMC write init + start
 	#else
 	int addr = saved_buffers * HK_RAM_BUF_SIZE;
 
@@ -87,7 +109,7 @@ static void hk_save_finish(vmem_t * wr_buf) {
 
 /* Write a queue to the RAM buffer */
 static void hk_write(param_queue_t * queue_in) {
-	vmem_t * wr_buf;
+	vmem_t *wr_buf;
 	if (active_write_buf == 0) {
 		wr_buf = &vmem_hk_wr0;
 	} else {
@@ -159,16 +181,18 @@ void param_transaction_callback_collect(csp_packet_t *response, int verbose, int
 	memset(&temp_queue, 0, sizeof(temp_queue));
 }
 
+/*
 csp_thread_return_t hk_task(void) {
 
 }
+*/
 
 
 void hk_init(void) {
 	/* HK storage init */
 	csp_mutex_create_static(&hk_storage_mtx, &hk_storage_mtx_buffer);
 	#if HK_EMBED
-	// TODO eMMC setup
+	// TODO eMMC init
 	#else
 	vmem_file_init(&vmem_hk_test);
 	#endif
