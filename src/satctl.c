@@ -36,6 +36,8 @@
 #include "tfetch.h"
 #include "csp_if_eth.h"
 
+#include "hk.h"
+
 #define SATCTL_PROMPT_GOOD		    "\033[96msatctl \033[90m%\033[0m "
 #define SATCTL_PROMPT_BAD		    "\033[96msatctl \033[31m!\033[0m "
 #define SATCTL_DEFAULT_CAN_DEV	    "can0"
@@ -326,6 +328,9 @@ int main(int argc, char **argv)
 	/* Test of time fetch */
 	vmem_file_init(&vmem_tfetch);
 	tfetch_onehz();
+
+	/* HK init */
+	hk_init();
 
 	/* Interactive or one-shot mode */
 	if (remain > 0) {

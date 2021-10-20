@@ -14,6 +14,10 @@
 #define PARAMID_COLLECTOR_RUN               201
 #define PARAMID_COLLECTOR_VERBOSE           202
 
+#define PARAMID_HK_COLLECTOR_CNFSTR         203
+#define PARAMID_HK_COLLECTOR_VERBOSE        204
+#define PARAMID_HK_COLLECTOR_RUN            205
+
 
 #define PARAMID_CRYPTO_KEY_PUBLIC           150
 #define PARAMID_CRYPTO_KEY_SECRET           151
