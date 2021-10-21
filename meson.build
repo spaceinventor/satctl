@@ -50,8 +50,10 @@ satctl_sources = [
 	'src/csp_if_eth.c',
 	'src/it6942a.c',
 	'src/csp_scan.c',
-	'src/hk.c',
-	'src/hk_collector.c',
+	'src/hk/hk.c',
+	'src/hk/hk_collector.c',
+	'src/hk/hk_client.c',
+	'src/hk/hk_slash.c',
 ]
 
 satctl = executable('satctl', satctl_sources,
